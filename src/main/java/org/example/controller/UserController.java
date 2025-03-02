@@ -18,7 +18,7 @@ public class UserController {
     public UserController() {
         this.userDAO = new UserDAO(); // Create an instance of UserDAO
     }
-    
+
     @GetMapping("/{email}")
     public UserProfile getUserProfile(@PathVariable String email) {
         User user = userDAO.getUserByEmail(email);
