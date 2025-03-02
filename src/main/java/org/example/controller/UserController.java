@@ -1,25 +1,31 @@
 package org.example.controller;
 
-import org.example.dao.UserDAO;
 import org.example.model.User;
+import org.example.model.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.example.dao.UserDAO;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/users")
- @CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
-    @Autowired
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
-    @GetMapping
-    public List<User> getUsers() {
-        return userDAO.getUsers();
+    // Constructor Injection (Recommended for Spring Beans)
+    public UserController() {
+        this.userDAO = new UserDAO(); // Create an instance of UserDAO
+    }
+    
+    @GetMapping("/{email}")
+    public UserProfile getUserProfile(@PathVariable String email) {
+        User user = userDAO.getUserByEmail(email);
+        if (user != null) {
+            List<User> friends = userDAO.getFriends(user.getId());
+            return new UserProfile(user, friends);
+        }
+        return null;
     }
 }
